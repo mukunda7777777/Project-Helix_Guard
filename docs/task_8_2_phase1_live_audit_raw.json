@@ -1,0 +1,604 @@
+{
+  "rs28897743": {
+    "benchmark_definition": {
+      "gene": "BRCA1",
+      "title": "NM_007294.4(BRCA1):c.5266dupC (p.Gln1756ProfsTer74)",
+      "classification": "Pathogenic",
+      "stars": 2,
+      "is_conflicting": false,
+      "benchmark_af": 0.000151,
+      "benchmark_transcripts": [
+        "ENST00000357654"
+      ],
+      "benchmark_pmids": [
+        "30093976",
+        "9145677",
+        "25741868"
+      ]
+    },
+    "live_sources": {
+      "ClinVar": {
+        "source": "ClinVar",
+        "endpoint": "https://www.ncbi.nlm.nih.gov/clinvar/variation/52242/",
+        "timestamp": "2026-11-04T05:39:12.344978+00:00",
+        "http_status": 200,
+        "latency_ms": 18196.316719055176,
+        "uid": "52242",
+        "live_title": "NM_000059.4(BRCA2):c.7007G>T (p.Arg2336Leu)",
+        "live_gene": "BRCA2",
+        "live_classification": "Pathogenic/Likely pathogenic",
+        "live_review_status": "criteria provided, multiple submitters, no conflicts",
+        "benchmark_classification": "Pathogenic",
+        "benchmark_stars": 2,
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "Ensembl": {
+        "source": "Ensembl VEP",
+        "endpoint": "https://rest.ensembl.org/vep/homo_sapiens/id/rs28897743",
+        "assembly": "GRCh38",
+        "timestamp": "2026-11-04T05:39:32.044402+00:00",
+        "http_status": 200,
+        "latency_ms": 25849.24006462097,
+        "transcripts_count": 42,
+        "sample_transcripts": [
+          {
+            "transcript_id": "ENST00000380152",
+            "gene_symbol": "BRCA2",
+            "consequence_terms": [
+              "missense_variant",
+              "splice_region_variant"
+            ],
+            "hgvsc": null,
+            "hgvsp": null,
+            "biotype": "protein_coding",
+            "sift_prediction": "deleterious",
+            "sift_score": 0.01,
+            "polyphen_prediction": "possibly_damaging",
+            "polyphen_score": 0.554,
+            "is_canonical": false,
+            "is_mane_select": false
+          },
+          {
+            "transcript_id": "ENST00000380152",
+            "gene_symbol": "BRCA2",
+            "consequence_terms": [
+              "missense_variant",
+              "splice_region_variant"
+            ],
+            "hgvsc": null,
+            "hgvsp": null,
+            "biotype": "protein_coding",
+            "sift_prediction": "tolerated",
+            "sift_score": 0.05,
+            "polyphen_prediction": "benign",
+            "polyphen_score": 0.007,
+            "is_canonical": false,
+            "is_mane_select": false
+          },
+          {
+            "transcript_id": "ENST00000380152",
+            "gene_symbol": "BRCA2",
+            "consequence_terms": [
+              "missense_variant",
+              "splice_region_variant"
+            ],
+            "hgvsc": null,
+            "hgvsp": null,
+            "biotype": "protein_coding",
+            "sift_prediction": "deleterious",
+            "sift_score": 0.02,
+            "polyphen_prediction": "benign",
+            "polyphen_score": 0.056,
+            "is_canonical": false,
+            "is_mane_select": false
+          }
+        ],
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "gnomAD": {
+        "source": "gnomAD",
+        "endpoint": "https://gnomad.broadinstitute.org/api",
+        "dataset": "gnomad_r4",
+        "assembly": "GRCh38",
+        "query_var_id": "17-43044295-C-dup",
+        "timestamp": "2026-11-04T05:39:58.895560+00:00",
+        "http_status": 200,
+        "latency_ms": 3722.045660018921,
+        "note": "Variant not found in gnomAD v4 with this exact VCF coordinate representation; fallback snapshot available",
+        "benchmark_af": 0.000151,
+        "status": "UNAVAILABLE",
+        "provenance": "LIVE_NOT_FOUND"
+      },
+      "PubMed": {
+        "source": "PubMed",
+        "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "query": "rs28897743 OR (BRCA1 AND rs28897743)",
+        "timestamp": "2026-11-04T05:40:03.619932+00:00",
+        "http_status": 200,
+        "latency_ms": 822.9999542236328,
+        "pmids_found": [
+          "40563557"
+        ],
+        "benchmark_pmids": [
+          "30093976",
+          "9145677",
+          "25741868"
+        ],
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "ClinGen": {
+        "source": "ClinGen",
+        "endpoint": "https://search.clinicalgenome.org/api/curations?gene=BRCA1",
+        "gene_context": "BRCA1",
+        "variant_level_indexing": "Gene-level validity context provided; ClinGen Allele Registry operates on separate CA IDs (canonical allele identifiers)",
+        "timestamp": "2026-11-04T05:40:05.445149+00:00",
+        "http_status": 200,
+        "latency_ms": 30885.711908340454,
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      }
+    },
+    "orchestrator_record": {
+      "variant_id": "rs28897743",
+      "normalized_id": "17-43044295-C-dup",
+      "chromosome": "17",
+      "position": 43044295,
+      "source_statuses": {
+        "ClinVar": "LOCAL_REFERENCE",
+        "Ensembl": "AVAILABLE",
+        "gnomAD": "LOCAL_REFERENCE",
+        "PubMed": "LOCAL_REFERENCE",
+        "ClinGen": "LOCAL_REFERENCE"
+      },
+      "clinvar_classification": "Pathogenic",
+      "clinvar_review_stars": 2,
+      "clinvar_conflicting": false,
+      "consequences_count": 42,
+      "gnomad_af": 0.000151,
+      "literature_count": 3,
+      "conflicts_detected": [],
+      "missing_evidence": [],
+      "orchestrator_latency_ms": 66435.28914451599
+    }
+  },
+  "rs121913527": {
+    "benchmark_definition": {
+      "gene": "TP53",
+      "title": "NM_000546.6(TP53):c.743G>A (p.Arg248Gln)",
+      "classification": "Pathogenic",
+      "stars": 3,
+      "is_conflicting": false,
+      "benchmark_af": 3.98e-06,
+      "benchmark_transcripts": [
+        "ENST00000269305"
+      ],
+      "benchmark_pmids": [
+        "1565144",
+        "17311302"
+      ]
+    },
+    "live_sources": {
+      "ClinVar": {
+        "source": "ClinVar",
+        "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "timestamp": "2026-11-04T05:41:44.771004+00:00",
+        "http_status": 0,
+        "latency_ms": 21342.373847961426,
+        "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+        "status": "ERROR",
+        "provenance": "ERROR"
+      },
+      "Ensembl": {
+        "source": "Ensembl VEP",
+        "endpoint": "https://rest.ensembl.org/vep/homo_sapiens/id/rs121913527",
+        "assembly": "GRCh38",
+        "timestamp": "2026-11-04T05:42:07.113716+00:00",
+        "http_status": 0,
+        "latency_ms": 27285.961866378784,
+        "error": "HTTPSConnectionPool(host='rest.ensembl.org', port=443): Read timed out. (read timeout=15)",
+        "status": "TIMEOUT",
+        "provenance": "ERROR"
+      },
+      "gnomAD": {
+        "source": "gnomAD",
+        "endpoint": "https://gnomad.broadinstitute.org/api",
+        "dataset": "gnomad_r4",
+        "assembly": "GRCh38",
+        "query_var_id": "17-7674220-C-T",
+        "timestamp": "2026-11-04T05:42:35.400751+00:00",
+        "http_status": 200,
+        "latency_ms": 5015.0511264801025,
+        "allele_count": 12,
+        "allele_number": 1613554,
+        "allele_frequency": 7.436999319514562e-06,
+        "benchmark_af": 3.98e-06,
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "PubMed": {
+        "source": "PubMed",
+        "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "query": "rs121913527 OR (TP53 AND rs121913527)",
+        "timestamp": "2026-11-04T05:42:41.417317+00:00",
+        "http_status": 200,
+        "latency_ms": 949.5232105255127,
+        "pmids_found": [
+          "29762787"
+        ],
+        "benchmark_pmids": [
+          "1565144",
+          "17311302"
+        ],
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "ClinGen": {
+        "source": "ClinGen",
+        "endpoint": "https://search.clinicalgenome.org/api/curations?gene=TP53",
+        "gene_context": "TP53",
+        "variant_level_indexing": "Offline fallback snapshot active",
+        "timestamp": "2026-11-04T05:42:43.369128+00:00",
+        "http_status": 0,
+        "latency_ms": 29655.654430389404,
+        "error": "HTTPSConnectionPool(host='search.clinicalgenome.org', port=443): Read timed out.",
+        "status": "LOCAL_REFERENCE",
+        "provenance": "LOCAL_REFERENCE"
+      }
+    },
+    "orchestrator_record": {
+      "variant_id": "rs121913527",
+      "normalized_id": "17-7674220-C-T",
+      "chromosome": "17",
+      "position": 7674220,
+      "source_statuses": {
+        "ClinVar": "AVAILABLE",
+        "Ensembl": "LOCAL_REFERENCE",
+        "gnomAD": "LOCAL_REFERENCE",
+        "PubMed": "LOCAL_REFERENCE",
+        "ClinGen": "LOCAL_REFERENCE"
+      },
+      "clinvar_classification": "Unknown",
+      "clinvar_review_stars": 0,
+      "clinvar_conflicting": false,
+      "consequences_count": 1,
+      "gnomad_af": 3.98e-06,
+      "literature_count": 2,
+      "conflicts_detected": [],
+      "missing_evidence": [],
+      "orchestrator_latency_ms": 101805.14168739319
+    }
+  },
+  "rs1042522": {
+    "benchmark_definition": {
+      "gene": "TP53",
+      "title": "NM_000546.6(TP53):c.215C>G (p.Pro72Arg)",
+      "classification": "Benign",
+      "stars": 3,
+      "is_conflicting": false,
+      "benchmark_af": 0.5416,
+      "benchmark_transcripts": [
+        "ENST00000269305"
+      ],
+      "benchmark_pmids": [
+        "10557279"
+      ]
+    },
+    "live_sources": {
+      "ClinVar": {
+        "source": "ClinVar",
+        "endpoint": "https://www.ncbi.nlm.nih.gov/clinvar/variation/864652/",
+        "timestamp": "2026-11-04T05:44:56.836054+00:00",
+        "http_status": 200,
+        "latency_ms": 5673.074960708618,
+        "uid": "864652",
+        "live_title": "NM_000546.6(TP53):c.215C>T (p.Pro72Leu)",
+        "live_gene": "TP53",
+        "live_classification": "Conflicting classifications of pathogenicity",
+        "live_review_status": "criteria provided, conflicting classifications",
+        "benchmark_classification": "Benign",
+        "benchmark_stars": 3,
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "Ensembl": {
+        "source": "Ensembl VEP",
+        "endpoint": "https://rest.ensembl.org/vep/homo_sapiens/id/rs1042522",
+        "assembly": "GRCh38",
+        "timestamp": "2026-11-04T05:45:04.011899+00:00",
+        "http_status": 0,
+        "latency_ms": 32698.495388031006,
+        "error": "HTTPSConnectionPool(host='rest.ensembl.org', port=443): Read timed out. (read timeout=15)",
+        "status": "TIMEOUT",
+        "provenance": "ERROR"
+      },
+      "gnomAD": {
+        "source": "gnomAD",
+        "endpoint": "https://gnomad.broadinstitute.org/api",
+        "dataset": "gnomad_r4",
+        "assembly": "GRCh38",
+        "query_var_id": "17-7676154-G-C",
+        "timestamp": "2026-11-04T05:45:37.711346+00:00",
+        "http_status": 200,
+        "latency_ms": 20883.904218673706,
+        "allele_count": 1142226,
+        "allele_number": 1613582,
+        "allele_frequency": 0.7078822148487031,
+        "benchmark_af": 0.5416,
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "PubMed": {
+        "source": "PubMed",
+        "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "query": "rs1042522 OR (TP53 AND rs1042522)",
+        "timestamp": "2026-11-04T05:45:59.597557+00:00",
+        "http_status": 200,
+        "latency_ms": 876.2490749359131,
+        "pmids_found": [
+          "42938823",
+          "42832476",
+          "42246034",
+          "42099507",
+          "42044432"
+        ],
+        "benchmark_pmids": [
+          "10557279"
+        ],
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "ClinGen": {
+        "source": "ClinGen",
+        "endpoint": "https://search.clinicalgenome.org/api/curations?gene=TP53",
+        "gene_context": "TP53",
+        "variant_level_indexing": "Offline fallback snapshot active",
+        "timestamp": "2026-11-04T05:46:01.474979+00:00",
+        "http_status": 0,
+        "latency_ms": 49525.85458755493,
+        "error": "HTTPSConnectionPool(host='search.clinicalgenome.org', port=443): Read timed out.",
+        "status": "LOCAL_REFERENCE",
+        "provenance": "LOCAL_REFERENCE"
+      }
+    },
+    "orchestrator_record": {
+      "variant_id": "rs1042522",
+      "normalized_id": "17-7676154-G-C",
+      "chromosome": "17",
+      "position": 7676154,
+      "source_statuses": {
+        "ClinVar": "LOCAL_REFERENCE",
+        "Ensembl": "LOCAL_REFERENCE",
+        "gnomAD": "LOCAL_REFERENCE",
+        "PubMed": "LOCAL_REFERENCE",
+        "ClinGen": "LOCAL_REFERENCE"
+      },
+      "clinvar_classification": "Benign",
+      "clinvar_review_stars": 3,
+      "clinvar_conflicting": false,
+      "consequences_count": 1,
+      "gnomad_af": 0.5416,
+      "literature_count": 1,
+      "conflicts_detected": [],
+      "missing_evidence": [],
+      "orchestrator_latency_ms": 56150.840520858765
+    }
+  },
+  "rs28897724": {
+    "benchmark_definition": {
+      "gene": "BRCA1",
+      "title": "NM_007294.4(BRCA1):c.5095C>T (p.Arg1699Gln)",
+      "classification": "Conflicting interpretations of pathogenicity",
+      "stars": 1,
+      "is_conflicting": true,
+      "benchmark_af": 3.18e-05,
+      "benchmark_transcripts": [
+        "ENST00000357654"
+      ],
+      "benchmark_pmids": [
+        "17018160"
+      ]
+    },
+    "live_sources": {
+      "ClinVar": {
+        "source": "ClinVar",
+        "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "timestamp": "2026-11-04T05:47:49.154864+00:00",
+        "http_status": 0,
+        "latency_ms": 15015.828609466553,
+        "error": "HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Max retries exceeded with url: /entrez/eutils/esearch.fcgi?db=clinvar&term=rs28897724%5Brsacc%5D&retmode=json&retmax=5 (Caused by ConnectTimeoutError(<HTTPSConnection(host='eutils.ncbi.nlm.nih.gov', port=443) at 0x2393a1066f0>, 'Connection to eutils.ncbi.nlm.nih.gov timed out. (connect timeout=15)'))",
+        "status": "ERROR",
+        "provenance": "ERROR"
+      },
+      "Ensembl": {
+        "source": "Ensembl VEP",
+        "endpoint": "https://rest.ensembl.org/vep/homo_sapiens/id/rs28897724",
+        "assembly": "GRCh38",
+        "timestamp": "2026-11-04T05:48:05.171636+00:00",
+        "http_status": 0,
+        "latency_ms": 15003.026485443115,
+        "error": "HTTPSConnectionPool(host='rest.ensembl.org', port=443): Max retries exceeded with url: /vep/homo_sapiens/id/rs28897724 (Caused by ConnectTimeoutError(<HTTPSConnection(host='rest.ensembl.org', port=443) at 0x2393a106120>, 'Connection to rest.ensembl.org timed out. (connect timeout=15)'))",
+        "status": "TIMEOUT",
+        "provenance": "ERROR"
+      },
+      "gnomAD": {
+        "source": "gnomAD",
+        "endpoint": "https://gnomad.broadinstitute.org/api",
+        "dataset": "gnomad_r4",
+        "assembly": "GRCh38",
+        "query_var_id": "17-43057110-C-T",
+        "timestamp": "2026-11-04T05:48:21.175613+00:00",
+        "http_status": 200,
+        "latency_ms": 29916.771173477173,
+        "note": "Variant not found in gnomAD v4 with this exact VCF coordinate representation; fallback snapshot available",
+        "benchmark_af": 3.18e-05,
+        "status": "UNAVAILABLE",
+        "provenance": "LIVE_NOT_FOUND"
+      },
+      "PubMed": {
+        "source": "PubMed",
+        "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "query": "rs28897724 OR (BRCA1 AND rs28897724)",
+        "timestamp": "2026-11-04T05:48:52.094090+00:00",
+        "http_status": 200,
+        "latency_ms": 20923.311471939087,
+        "pmids_found": [],
+        "benchmark_pmids": [
+          "17018160"
+        ],
+        "status": "UNAVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "ClinGen": {
+        "source": "ClinGen",
+        "endpoint": "https://search.clinicalgenome.org/api/curations?gene=BRCA1",
+        "gene_context": "BRCA1",
+        "variant_level_indexing": "Offline fallback snapshot active",
+        "timestamp": "2026-11-04T05:49:14.020164+00:00",
+        "http_status": 0,
+        "latency_ms": 17814.08667564392,
+        "error": "HTTPSConnectionPool(host='search.clinicalgenome.org', port=443): Read timed out. (read timeout=15)",
+        "status": "LOCAL_REFERENCE",
+        "provenance": "LOCAL_REFERENCE"
+      }
+    },
+    "orchestrator_record": {
+      "variant_id": "rs28897724",
+      "normalized_id": "17-43057110-C-T",
+      "chromosome": "17",
+      "position": 43057110,
+      "source_statuses": {
+        "ClinVar": "LOCAL_REFERENCE",
+        "Ensembl": "LOCAL_REFERENCE",
+        "gnomAD": "LOCAL_REFERENCE",
+        "PubMed": "LOCAL_REFERENCE",
+        "ClinGen": "LOCAL_REFERENCE"
+      },
+      "clinvar_classification": "Conflicting interpretations of pathogenicity",
+      "clinvar_review_stars": 1,
+      "clinvar_conflicting": true,
+      "consequences_count": 1,
+      "gnomad_af": 3.18e-05,
+      "literature_count": 1,
+      "conflicts_detected": [
+        "ClinVar Classification Conflict: Conflicting assertions: 12 Pathogenic / Likely pathogenic vs 6 Uncertain significance (VUS)."
+      ],
+      "missing_evidence": [],
+      "orchestrator_latency_ms": 74273.74720573425
+    }
+  },
+  "rs80357906": {
+    "benchmark_definition": {
+      "gene": "BRCA1",
+      "title": "NM_007294.4(BRCA1):c.68_69delAG (p.Glu23ValfsTer17)",
+      "classification": "Pathogenic",
+      "stars": 2,
+      "is_conflicting": false,
+      "benchmark_af": 9.55e-05,
+      "benchmark_transcripts": [
+        "ENST00000357654"
+      ],
+      "benchmark_pmids": [
+        "7573030"
+      ]
+    },
+    "live_sources": {
+      "ClinVar": {
+        "source": "ClinVar",
+        "endpoint": "https://www.ncbi.nlm.nih.gov/clinvar/variation/17677/",
+        "timestamp": "2026-11-04T05:50:48.114284+00:00",
+        "http_status": 200,
+        "latency_ms": 11371.474504470825,
+        "uid": "17677",
+        "live_title": "NM_007294.4(BRCA1):c.5266dup (p.Gln1756fs)",
+        "live_gene": "BRCA1",
+        "live_classification": "Pathogenic",
+        "live_review_status": "reviewed by expert panel",
+        "benchmark_classification": "Pathogenic",
+        "benchmark_stars": 2,
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "Ensembl": {
+        "source": "Ensembl VEP",
+        "endpoint": "https://rest.ensembl.org/vep/homo_sapiens/id/rs80357906",
+        "assembly": "GRCh38",
+        "timestamp": "2026-11-04T05:51:00.988831+00:00",
+        "http_status": 0,
+        "latency_ms": 18825.33621788025,
+        "error": "HTTPSConnectionPool(host='rest.ensembl.org', port=443): Read timed out. (read timeout=15)",
+        "status": "TIMEOUT",
+        "provenance": "ERROR"
+      },
+      "gnomAD": {
+        "source": "gnomAD",
+        "endpoint": "https://gnomad.broadinstitute.org/api",
+        "dataset": "gnomad_r4",
+        "assembly": "GRCh38",
+        "query_var_id": "17-43124031-AG--",
+        "timestamp": "2026-11-04T05:51:20.815295+00:00",
+        "http_status": 200,
+        "latency_ms": 2215.297222137451,
+        "note": "Variant not found in gnomAD v4 with this exact VCF coordinate representation; fallback snapshot available",
+        "benchmark_af": 9.55e-05,
+        "status": "UNAVAILABLE",
+        "provenance": "LIVE_NOT_FOUND"
+      },
+      "PubMed": {
+        "source": "PubMed",
+        "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "query": "rs80357906 OR (BRCA1 AND rs80357906)",
+        "timestamp": "2026-11-04T05:51:24.033278+00:00",
+        "http_status": 200,
+        "latency_ms": 1759.340524673462,
+        "pmids_found": [
+          "40834323",
+          "39436532",
+          "37121054",
+          "31228854",
+          "30611917"
+        ],
+        "benchmark_pmids": [
+          "7573030"
+        ],
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      },
+      "ClinGen": {
+        "source": "ClinGen",
+        "endpoint": "https://search.clinicalgenome.org/api/curations?gene=BRCA1",
+        "gene_context": "BRCA1",
+        "variant_level_indexing": "Gene-level validity context provided; ClinGen Allele Registry operates on separate CA IDs (canonical allele identifiers)",
+        "timestamp": "2026-11-04T05:51:26.799478+00:00",
+        "http_status": 200,
+        "latency_ms": 13529.005765914917,
+        "status": "AVAILABLE",
+        "provenance": "LIVE_API"
+      }
+    },
+    "orchestrator_record": {
+      "variant_id": "rs80357906",
+      "normalized_id": "17-43124031-AG--",
+      "chromosome": "17",
+      "position": 43124031,
+      "source_statuses": {
+        "ClinVar": "LOCAL_REFERENCE",
+        "Ensembl": "AVAILABLE",
+        "gnomAD": "LOCAL_REFERENCE",
+        "PubMed": "AVAILABLE",
+        "ClinGen": "LOCAL_REFERENCE"
+      },
+      "clinvar_classification": "Pathogenic",
+      "clinvar_review_stars": 2,
+      "clinvar_conflicting": false,
+      "consequences_count": 70,
+      "gnomad_af": 9.55e-05,
+      "literature_count": 5,
+      "conflicts_detected": [],
+      "missing_evidence": [],
+      "orchestrator_latency_ms": 52261.613845825195
+    }
+  }
+}
