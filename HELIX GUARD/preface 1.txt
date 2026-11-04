@@ -1,0 +1,164 @@
+# AI-Driven Genetic Risk Prediction & In-Silico Correction Design
+### Project Overview Document
+
+---
+
+## 1. What We Wanted To Do (Original Idea)
+
+The original goal was to explore whether AI could analyze a genome/gene sequence to:
+- Predict genetic health conditions a future child might face
+- Identify which part of the gene causes each condition
+- Propose a way to correct the problematic gene sequence
+- Simulate what a corrected ("modified") gene sequence would look like
+
+Early framing included the idea of eventually inserting a corrected gene sequence into a
+developing embryo. After discussion, the project scope was clarified to stay **entirely
+computational/simulation-based** — we do NOT perform, plan, or claim to perform any real
+wet-lab or clinical procedure. We do not address sex selection or non-medical "enhancement"
+of traits like intelligence — only well-characterized, disease-relevant genetic corrections
+and a small number of well-documented, real, single-locus beneficial variants.
+
+---
+
+## 2. What We Are Actually Doing (Finalized Scope)
+
+**Project type:** Academic/research project (feeds into a journal-style writeup), team of 2–3,
+timeline 1–2 months, built and trained from scratch (no pretrained models), run on Google Colab.
+
+**Core idea:** Build a small AI model + rule-based pipeline that:
+1. Screens an input genome sample against a **panel of 5 well-characterized monogenic
+   conditions**, ranked by severity/priority.
+2. Flags pathogenic variants using a trained classifier.
+3. Proposes a corrected version of the sequence for each flagged variant.
+4. Checks each new correction against all previous corrections for conflicts
+   (epistasis / pleiotropy / cumulative effects) and resolves them.
+5. Re-validates the fully edited sequence at the end.
+6. Optionally suggests a small number of real, well-documented beneficial variants
+   (e.g., CCR5-Δ32 for HIV resistance) — flagged with known trade-offs, not treated as
+   "enhancement."
+7. Outputs a final simulated sequence + a full report of what was changed, why, and
+   what risks were checked.
+
+**Gene panel (v1):**
+
+| Priority | Condition | Gene | Mutation type |
+|---|---|---|---|
+| 1 | Hereditary Breast/Ovarian Cancer | BRCA1 | Many types, scattered (variant-specific) |
+| 2 | Sickle Cell Anemia | HBB | Point substitution |
+| 3 | Cystic Fibrosis | CFTR | Small deletion (indel) |
+| 4 | Tay-Sachs Disease | HEXA | Small insertion (indel) |
+| 5 | Duchenne Muscular Dystrophy | DMD | Large exon deletion (frame-restoration case) |
+
+**Data sources (all free/public):**
+- ClinVar — labeled pathogenic/benign variants (ground truth)
+- gnomAD — population variant frequency (extra negative/benign examples)
+- Ensembl / UCSC Genome Browser — reference sequence (GRCh38), gene coordinates
+- 1000 Genomes Project — sample test genomes
+
+**Model:** Custom-built 1D CNN classifier (input: DNA sequence window around a variant →
+output: pathogenic/benign probability), trained from scratch on ClinVar-labeled data per gene.
+Upgrade path to a small custom Transformer if time allows.
+
+**Compute:** Google Colab.
+
+---
+
+## 3. Algorithm Flow
+
+```
+INPUT: genome_sequence, variant_data (VCF format)
+
+PRIORITY_LIST = [BRCA1, HBB, CFTR, HEXA, DMD]   # ranked by severity/mortality
+current_sequence = genome_sequence
+edit_history = []
+
+PHASE 1: Sequential priority-based screening & editing
+  FOR disease IN PRIORITY_LIST:
+    variants_found = scan_for_pathogenic_variants(current_sequence, disease.gene_region)
+
+    IF variants_found:
+      FOR variant IN variants_found:
+        proposed_edit = generate_correction(variant, reference_allele)
+        candidate_sequence = apply_edit(current_sequence, proposed_edit)
+
+        # Cross-effect check against ALL prior edits
+        conflicts = []
+        FOR prior_edit IN edit_history:
+          new_risk = recompute_disease_risk(candidate_sequence, prior_edit.region)
+          IF new_risk > prior_edit.original_risk:
+            conflicts.append(prior_edit)
+
+        IF conflicts:
+          proposed_edit = resolve_conflict(proposed_edit, conflicts, candidate_sequence)
+          candidate_sequence = apply_edit(current_sequence, proposed_edit)
+
+        current_sequence = candidate_sequence
+        edit_history.append({
+            variant, proposed_edit, region,
+            original_risk, new_risk, conflicts_resolved: bool
+        })
+    ELSE:
+      log(disease, status="clear")
+
+PHASE 2: Final full-sequence validation
+  all_risks = predict_all_disease_risks(current_sequence, PRIORITY_LIST)
+  new_problems = [r for r in all_risks if r.pathogenic AND r.gene NOT IN edit_history]
+
+  IF new_problems:
+    FOR problem IN new_problems:
+      backtrack_edit = refine(most_recent_relevant_edit(problem), current_sequence)
+      current_sequence = apply_edit(current_sequence, backtrack_edit)
+    RE-RUN PHASE 2   # loop until clean or max_iterations reached
+
+  validated_sequence = current_sequence
+
+PHASE 3: Optional beneficial trait suggestion [STRETCH GOAL]
+  FOR trait IN [immunity, ...]:   # only well-characterized, real, single-locus variants
+    candidate_allele = suggest_beneficial_allele(trait, validated_sequence)
+    IF candidate_allele AND no_conflict(candidate_allele, validated_sequence, edit_history):
+      validated_sequence = apply_edit(validated_sequence, candidate_allele)
+      edit_history.append(candidate_allele)
+
+OUTPUT:
+  final_sequence     # FASTA
+  edit_report        # per-edit: gene, variant, action, confidence, conflicts resolved
+  risk_profile       # before/after risk per disease in panel
+  prep_notes         # documentation of method, format, assumptions
+```
+
+**Correction types the pipeline must handle (not one-size-fits-all):**
+1. Substitution repair (e.g., HBB) — swap base(s) back to reference
+2. Indel repair (e.g., CFTR, HEXA) — insert/delete bases to restore reference length & frame
+3. Variant-specific / frame-strategy repair (e.g., BRCA1, DMD) — look up exact variant in
+   ClinVar and restore it individually, or flag that simple substitution does not apply
+
+**Complication categories checked during editing:**
+| Type | What it checks |
+|---|---|
+| Epistasis / pleiotropy | Does this edit change predicted risk for other panel diseases? |
+| Regulatory disruption | Is this edit near a promoter/enhancer for a different gene? (future work) |
+| Cumulative fragility | Always validate against the *current* edited sequence, not just the original |
+| Off-target effects | Could a real edit at this position affect unintended locations? (future work) |
+
+---
+
+## 4. Explicit Ethical Scope
+
+- Purely a computational simulation/prediction tool — no wet-lab work, no real embryos,
+  no patient data.
+- Does not address sex selection.
+- Does not attempt polygenic "enhancement" (e.g., intelligence, height) — only well-documented,
+  single-locus disease corrections and real, previously studied beneficial variants presented
+  with their known trade-offs.
+- All data used is public and de-identified (ClinVar, gnomAD, 1000 Genomes) — no private or
+  patient-identifiable data.
+
+---
+
+## 5. Next Steps
+- Finalize/confirm gene panel
+- Pull ClinVar + reference sequence data for HBB first (simplest case) to build first working
+  `generate_correction()` function
+- Build and train the 1D CNN classifier on Colab
+- Expand to full 5-gene panel
+- Build report/output generation

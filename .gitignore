@@ -1,4 +1,44 @@
-.venv/
-__pycache__/
-*.pyc
+# =============================================================================
+# Helix Guard: Git Ignore Configuration (Security & Cleanliness)
+# =============================================================================
+
+# Credentials, Keys and Sensitive Configuration (CRITICAL SECURITY)
+*credentials*.txt
+*credential*
+*.env
 .env
+*.env.local
+*secret*
+*.key
+*.token
+*.pem
+.streamlit/secrets.toml
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.evidence_cache/
+.cache/
+
+# Temporary / OS Files
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+temp_uploaded_*.json
+
