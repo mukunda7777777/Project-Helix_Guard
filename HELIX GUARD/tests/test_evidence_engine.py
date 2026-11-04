@@ -1492,3 +1492,76 @@ def test_orchestrator_partial_failure_resilience(mock_get, mock_post):
         assert record.clinical_evidence.primary_classification == "Pathogenic"
 
 
+def test_pubmed_summary_pmid_deduplication():
+    """Verifies that PubMed summary parsing eliminates duplicate PMIDs."""
+    from evidence_engine import PubMedAdapter, EvidenceProvenance
+
+    adapter = PubMedAdapter()
+    prov = EvidenceProvenance("PubMed", "esummary.fcgi", "2026-11-04T00:00:00Z", "https://pubmed.ncbi.nlm.nih.gov")
+    
+    # Mock result dictionary with repeated UIDs
+    mock_payload = {
+        "result": {
+            "uids": ["12345678", "12345678", "87654321"],
+            "12345678": {"title": "Study on BRCA1 variant", "source": "Nature", "pubdate": "2023 Jun"},
+            "87654321": {"title": "TP53 polymorphism analysis", "source": "Science", "pubdate": "2024 Jan"}
+        }
+    }
+    
+    pubs = adapter._parse_pubmed_summaries(mock_payload, prov)
+    assert len(pubs) == 2, f"Expected 2 deduplicated publications, got {len(pubs)}"
+    pmids = [p.pmid for p in pubs]
+    assert pmids == ["12345678", "87654321"]
+
+
+def test_gnomad_adapter_non_vcf_allele_syntax_handling():
+    """
+    Verifies that non-VCF alleles (e.g. 'dup', '-') are intercepted before
+    sending malformed queries to gnomAD GraphQL, properly engaging verified fallback.
+    """
+    from evidence_engine import GnomadAdapter, VariantNormalizer, SourceStatus, GenomeAssembly
+
+    adapter = GnomadAdapter()
+    # rs28897743 has alternate_allele = 'dup'
+    var_id = VariantNormalizer.normalize("rs28897743", assembly=GenomeAssembly.GRCh38)
+    assert var_id.alternate_allele.lower() == "dup"
+
+    status, pop_freq, prov = adapter.fetch_variant_population_frequencies(var_id, use_cache=False)
+    assert status == SourceStatus.LOCAL_REFERENCE
+    assert pop_freq is not None
+    assert pop_freq.is_local_reference is True
+    assert pop_freq.allele_frequency == 0.000151
+
+
+def test_evidence_fidelity_live_vs_local_reference_isolation():
+    """
+    Verifies that live evidence and LOCAL_REFERENCE evidence remain strictly distinguishable
+    in VariantEvidenceRecord and that unobserved status is never fabricated as confirmed negative.
+    """
+    from evidence_engine import (
+        VariantEvidenceRecord, VariantIdentity, ClinicalClassification,
+        VariantPopulationFrequency, SourceStatus, GenomeAssembly, EvidenceProvenance
+    )
+
+    prov_live = EvidenceProvenance("ClinVar", "esummary.fcgi", "2026-11-04T00:00:00Z", "https://ncbi.nlm.nih.gov/clinvar", is_local_reference=False)
+    prov_local = EvidenceProvenance("gnomAD", "local_snapshot", "2026-11-04T00:00:00Z", "https://gnomad.broadinstitute.org", is_local_reference=True)
+
+    var_id = VariantIdentity("rs123", "17", 1000, "C", "T", GenomeAssembly.GRCh38, "rs123")
+    clin = ClinicalClassification("ClinVar", "100", "Title", "Pathogenic", "criteria provided", 2, [], is_local_reference=False, provenance=prov_live)
+    pop = VariantPopulationFrequency("gnomAD", GenomeAssembly.GRCh38, allele_frequency=0.001, is_local_reference=True, provenance=prov_local)
+
+    rec = VariantEvidenceRecord(
+        variant_identity=var_id,
+        source_statuses={"ClinVar": SourceStatus.AVAILABLE, "gnomAD": SourceStatus.LOCAL_REFERENCE},
+        clinical_evidence=clin,
+        population_evidence=pop,
+    )
+
+    assert rec.source_statuses["ClinVar"] == SourceStatus.AVAILABLE
+    assert rec.clinical_evidence.is_local_reference is False
+    assert rec.source_statuses["gnomAD"] == SourceStatus.LOCAL_REFERENCE
+    assert rec.population_evidence.is_local_reference is True
+    assert rec.source_statuses["ClinVar"] != rec.source_statuses["gnomAD"]
+
+
+

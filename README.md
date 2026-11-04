@@ -1,7 +1,7 @@
 # Helix Guard: Genomic Machine Learning & Evidence Intelligence Platform
 
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
-[![PyTest](https://img.shields.io/badge/tests-125%20passed-brightgreen.svg)]()
+[![PyTest](https://img.shields.io/badge/tests-128%20passed-brightgreen.svg)]()
 [![Platform](https://img.shields.io/badge/platform-Streamlit-red.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/license-Research--Only-lightgrey.svg)]()
 
@@ -37,15 +37,15 @@ Helix Guard integrates three primary analytical workflows and an evidence intell
 
 ## Verification & Test Suite
 
-The platform includes **125 automated tests** across four test modules (100% pass rate):
+The platform includes **128 automated tests** across four test modules (100% pass rate):
 
 | Module | Test Count | Scope |
 |---|---|---|
-| `test_evidence_engine.py` | 48 | Data contracts, assembly isolation, 5-source adapters, normalizer, and conflict detection |
+| `test_evidence_engine.py` | 51 | Data contracts, assembly isolation, 5-source adapters, normalizer, conflict detection, and regression tests |
 | `test_genetic_data_engine.py` | 23 | ClinVar ingestion, label curation, target-leakage prevention, and feature engineering |
 | `test_quantum_engine.py` | 34 | Qiskit circuit construction, feature normalizers, ansatz evaluation, and model persistence |
 | `test_streamlit_app.py` | 20 | Streamlit UI integration, security/credential masking, and evidence rendering |
-| **Total** | **125** | **Zero failures, zero skips (Exit Code: 0)** |
+| **Total** | **128** | **Zero failures, zero skips (Exit Code: 0)** |
 
 ---
 
@@ -76,3 +76,4 @@ Open `http://localhost:8501` in your browser.
 ## Scientific & Ethical Disclaimers
 
 > **IMPORTANT**: Helix Guard provides in-silico computational research decision-support only. It does not provide clinical diagnoses, therapeutic prescriptions, or autonomous gene-editing recommendations. All assertions are traceable to primary source endpoints with explicit reference assembly isolation (GRCh38 vs. GRCh37).
+

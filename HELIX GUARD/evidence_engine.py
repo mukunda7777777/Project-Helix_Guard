@@ -2319,6 +2319,21 @@ class GnomadAdapter(BaseSourceAdapter):
                 pop_freq = self._parse_gnomad_variant_popfreq(data, variant_identity.assembly, prov)
                 return SourceStatus.CACHED, pop_freq, prov
 
+        # Check if alleles are valid VCF nucleotide strings [ACGT]+
+        is_vcf_format = bool(
+            variant_identity.chromosome != "Unknown"
+            and variant_identity.position > 0
+            and re.match(r"^[ACGT]+$", variant_identity.reference_allele.upper())
+            and re.match(r"^[ACGT]+$", variant_identity.alternate_allele.upper())
+        )
+
+        if not is_vcf_format:
+            # Non-VCF allele syntax (e.g. 'dup', '-') cannot be looked up by coordinate in gnomAD
+            status, pop_freq, prov = self._fallback_variant_frequencies(variant_identity)
+            if status == SourceStatus.LOCAL_REFERENCE:
+                return status, pop_freq, prov
+            return SourceStatus.UNAVAILABLE, None, None
+
         # GraphQL query for variant frequency
         ref_dataset = "gnomad_r4" if variant_identity.assembly == GenomeAssembly.GRCh38 else "gnomad_r2_1"
         var_query_id = f"{variant_identity.chromosome}-{variant_identity.position}-{variant_identity.reference_allele}-{variant_identity.alternate_allele}"
@@ -2628,6 +2643,8 @@ class PubMedAdapter(BaseSourceAdapter):
 
         for uid in uids:
             uid_str = str(uid)
+            if any(p.pmid == uid_str for p in pubs):
+                continue
             item = result_dict.get(uid_str) or result_dict.get(uid)
             if not isinstance(item, dict):
                 continue
