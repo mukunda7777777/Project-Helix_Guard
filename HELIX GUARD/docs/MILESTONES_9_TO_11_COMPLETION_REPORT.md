@@ -105,3 +105,4 @@ tests/test_vcf_and_fasta.py ....                                        [100%]
 1. **Computational Simulation Scope**: HELIX GUARD is explicitly restricted to computational risk modeling and in-silico edit simulation. No clinical interventions, embryonic modifications, or polygenic enhancements are performed.
 2. **Preservation of Scientific Uncertainty**: Unphased recessive variants are explicitly reported as unconfirmed phase risk rather than assuming benign or pathogenic configurations.
 3. **Traceable Molecular Audit Trails**: Every simulated base alteration documents its editing strategy, modality, guide RNA candidate, predicted efficiency, and off-target risk estimate.
+
