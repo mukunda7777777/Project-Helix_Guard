@@ -1073,8 +1073,24 @@ with tab_clinvar:
                     "must **not** be interpreted as verified biological pathogenicity."
                 )
 
+            # Task 8.3: Submitter Concordance vs. Discordance Breakdown Metrics
             if ce.submissions:
-                with st.expander(f"📋 Individual Submissions ({len(ce.submissions)} laboratory reports)", expanded=False):
+                sig_counts = {}
+                for s in ce.submissions:
+                    sig_label = s.clinical_significance or "Unspecified"
+                    sig_counts[sig_label] = sig_counts.get(sig_label, 0) + 1
+
+                p_count = sum(c for k, c in sig_counts.items() if "pathogenic" in k.lower())
+                b_count = sum(c for k, c in sig_counts.items() if "benign" in k.lower())
+                v_count = sum(c for k, c in sig_counts.items() if "uncertain" in k.lower() or "vus" in k.lower())
+                o_count = sum(c for k, c in sig_counts.items() if not any(x in k.lower() for x in ["pathogenic", "benign", "uncertain", "vus"]))
+
+                col_sb1, col_sb2, col_sb3 = st.columns(3)
+                col_sb1.metric("Pathogenic / Likely Pathogenic", f"{p_count} reports")
+                col_sb2.metric("Uncertain Significance (VUS)", f"{v_count} reports")
+                col_sb3.metric("Benign / Likely Benign", f"{b_count} reports" if b_count > 0 else f"{o_count} other/risk reports")
+
+                with st.expander(f"📋 Individual Submissions & Assertion Criteria ({len(ce.submissions)} laboratory reports)", expanded=False):
                     sub_rows = []
                     for s in ce.submissions:
                         sub_rows.append({
@@ -1082,8 +1098,12 @@ with tab_clinvar:
                             "Clinical Significance": s.clinical_significance,
                             "Review Status": s.review_status,
                             "Date Evaluated": s.evaluation_date or "Not specified",
+                            "Assertion Details": s.description or "Criteria provided according to laboratory guidelines",
                         })
                     st.dataframe(pd.DataFrame(sub_rows), use_container_width=True)
+                    if ce.vcv_accession or ce.variation_id:
+                        v_id_link = ce.variation_id or ce.vcv_accession
+                        st.caption(f"🔗 [View Live Variation Record in NCBI ClinVar](https://www.ncbi.nlm.nih.gov/clinvar/variation/{v_id_link}/)")
         else:
             st.markdown("##### ⚖️ Clinical Classification (NCBI ClinVar)")
             st.caption("⚪ No clinical classification or variant landscape record retrieved for this query.")
@@ -1109,21 +1129,68 @@ with tab_clinvar:
                 })
             st.dataframe(pd.DataFrame(vep_rows), use_container_width=True)
 
-        # 5. In-Silico Computational Inferences
+        # 5. In-Silico Computational Inferences (Task 8.3 Enhanced Cards)
         if var_rec and var_rec.computational_evidence:
             st.markdown("##### 💻 In-Silico Computational Inferences")
             st.warning(
-                "⚠️ **In-Silico Inference Notice**: Algorithmic predictions (SIFT, PolyPhen, CADD, QNN) are exploratory hypothesis generators "
-                "based on sequence conservation and physicochemical modeling. They do **not** constitute verified clinical or biological pathogenicity. "
+                "⚠️ **In-Silico Hypothesis-Generation Notice**: Algorithmic predictions (SIFT, PolyPhen, CADD, QNN) "
+                "are exploratory mathematical models based on sequence conservation and physicochemical modeling. "
+                "They do **not** constitute clinical diagnoses or confirmed biological pathogenicity. "
                 "Never use computational scores in isolation for diagnostic or therapeutic decisions."
             )
+
+            # Extract key predictors for visual metric cards
+            comp_map = {c.prediction_method.lower(): c for c in var_rec.computational_evidence}
+            c_sift = comp_map.get("sift")
+            c_pph = comp_map.get("polyphen-2") or comp_map.get("polyphen")
+            c_qnn = comp_map.get("helixguard-qnn") or comp_map.get("qnn")
+
+            col_p1, col_p2, col_p3 = st.columns(3)
+            with col_p1:
+                if c_sift:
+                    s_score_txt = f"{c_sift.numerical_score:.3f}" if c_sift.numerical_score is not None else "Score N/A"
+                    col_p1.metric(
+                        "SIFT (Conservation)",
+                        c_sift.prediction_output.capitalize(),
+                        f"Score: {s_score_txt}",
+                        help="SIFT score <= 0.05 is predicted deleterious based on evolutionary amino acid conservation."
+                    )
+                else:
+                    col_p1.metric("SIFT (Conservation)", "Not Available", help="SIFT score not reported for this coordinate.")
+
+            with col_p2:
+                if c_pph:
+                    pp_score_txt = f"{c_pph.numerical_score:.3f}" if c_pph.numerical_score is not None else "Score N/A"
+                    col_p2.metric(
+                        "PolyPhen-2 (Structural)",
+                        c_pph.prediction_output.replace("_", " ").capitalize(),
+                        f"Score: {pp_score_txt}",
+                        help="PolyPhen-2 assesses structural disruption: probably damaging (score close to 1.0) vs benign."
+                    )
+                else:
+                    col_p2.metric("PolyPhen-2 (Structural)", "Not Available", help="PolyPhen score not reported for this coordinate.")
+
+            with col_p3:
+                if c_qnn:
+                    q_score_txt = f"{c_qnn.numerical_score:.3f}" if c_qnn.numerical_score is not None else "N/A"
+                    col_p3.metric(
+                        "HelixGuard Hybrid QNN",
+                        c_qnn.prediction_output,
+                        f"Expectation: {q_score_txt}",
+                        help="Exploratory 4-qubit variational quantum neural network expectation value (synthetic benchmark)."
+                    )
+                else:
+                    col_p3.metric("HelixGuard QNN", "Synthetic Demo", help="Experimental variational statevector classifier.")
+
+            # Comprehensive computational table
             comp_rows = []
             for c in var_rec.computational_evidence:
                 comp_rows.append({
                     "Method": c.prediction_method,
                     "Prediction Output": c.prediction_output,
                     "Numerical Score": f"{c.numerical_score:.3f}" if c.numerical_score is not None else "N/A",
-                    "Version": c.version or "-",
+                    "Score Interpretation": "≤0.05 Deleterious" if "sift" in c.prediction_method.lower() else ("≥0.5 Damaging" if "polyphen" in c.prediction_method.lower() else "Hypothesis Score"),
+                    "Version": c.version or "Current",
                     "Source": c.source,
                 })
             st.dataframe(pd.DataFrame(comp_rows), use_container_width=True)
@@ -1155,28 +1222,65 @@ with tab_clinvar:
                 "Constraint metrics must never be used in isolation to dismiss variant pathogenicity."
             )
 
-        # Variant-Level Population Frequency
+        # Variant-Level Population Frequency & Ancestry Distribution (Task 8.3 Enhanced Visualizer)
         if active_bundle.query_type == "variant" or (active_bundle.population_frequency and active_bundle.population_frequency.allele_frequency is not None):
-            st.markdown("##### 🌐 Variant-Level Population Frequencies (gnomAD)")
+            st.markdown("##### 🌐 Variant-Level Population Frequencies & Ancestry Distribution (gnomAD)")
             pf = active_bundle.population_frequency
             if pf:
                 col_v1, col_v2, col_v3, col_v4 = st.columns(4)
-                col_v1.metric("Allele Frequency (AF)", f"{pf.allele_frequency:.6f}" if pf.allele_frequency is not None else "Unobserved")
+                col_v1.metric("Global Allele Frequency (AF)", f"{pf.allele_frequency:.6f}" if pf.allele_frequency is not None else "Unobserved")
                 col_v2.metric("Allele Count (AC)", f"{pf.allele_count:,}" if pf.allele_count is not None else "0")
                 col_v3.metric("Allele Number (AN)", f"{pf.allele_number:,}" if pf.allele_number is not None else "0")
                 col_v4.metric("Homozygote Count", f"{pf.homozygote_count:,}" if pf.homozygote_count is not None else "0")
 
                 if var_rec and var_rec.population_evidence and var_rec.population_evidence.popmax_frequency is not None:
                     pe = var_rec.population_evidence
-                    st.caption(f"**Popmax Allele Frequency**: `{pe.popmax_frequency:.6f}` in `{pe.popmax_population}`")
+                    st.info(
+                        f"📍 **Popmax Subpopulation Callout**: Maximum subpopulation frequency is **`{pe.popmax_frequency:.6f}`** "
+                        f"observed in **`{pe.popmax_population}`**. Popmax is critical for filtering out common founder variants."
+                    )
 
                 if var_rec and var_rec.population_evidence and var_rec.population_evidence.ancestry_frequencies:
-                    with st.expander("🌍 Continental Ancestry Frequency Distribution", expanded=False):
-                        anc_rows = [
-                            {"Continental Ancestry": k.upper(), "Allele Frequency": f"{v:.6f}"}
-                            for k, v in var_rec.population_evidence.ancestry_frequencies.items()
-                        ]
-                        st.dataframe(pd.DataFrame(anc_rows), use_container_width=True)
+                    st.markdown("###### 📊 Interactive Continental Ancestry Frequency Distribution")
+                    st.caption(
+                        "💡 **Scientific Guidance**: Population frequency differences reflect demographic history, bottleneck events, "
+                        "and genetic drift. An elevated frequency in an isolated or founder population (e.g. Ashkenazi Jewish or Finnish) "
+                        "must never be conflated with differential intrinsic pathogenicity."
+                    )
+
+                    anc_dict = var_rec.population_evidence.ancestry_frequencies
+                    anc_labels = {
+                        "afr": "African / African American (AFR)",
+                        "amr": "Admixed American / Latino (AMR)",
+                        "asj": "Ashkenazi Jewish (ASJ)",
+                        "eas": "East Asian (EAS)",
+                        "fin": "European (Finnish) (FIN)",
+                        "nfe": "European (Non-Finnish) (NFE)",
+                        "sas": "South Asian (SAS)",
+                        "mid": "Middle Eastern (MID)",
+                        "ami": "Amish (AMI)",
+                        "remaining": "Other / Remaining",
+                    }
+                    chart_data = []
+                    table_data = []
+                    for k, v in anc_dict.items():
+                        clean_k = k.lower()
+                        lbl = anc_labels.get(clean_k, clean_k.upper())
+                        chart_data.append({"Continental Ancestry": lbl, "Allele Frequency": v})
+                        table_data.append({
+                            "Continental Ancestry": lbl,
+                            "Allele Frequency (Decimal)": f"{v:.6f}",
+                            "Frequency Percentage": f"{v * 100:.4f}%",
+                            "Frequency Magnitude": f"{v:.2e}",
+                        })
+
+                    chart_df = pd.DataFrame(chart_data).set_index("Continental Ancestry")
+                    st.bar_chart(chart_df)
+
+                    with st.expander("📋 Detailed Subpopulation Breakdown Table", expanded=False):
+                        st.dataframe(pd.DataFrame(table_data), use_container_width=True)
+                else:
+                    st.caption("⚪ Subpopulation ancestry breakdown unobserved or not reported for this variant coordinate in gnomAD.")
             else:
                 st.caption("⚪ gnomAD variant population frequencies unobserved or unavailable for this query.")
 

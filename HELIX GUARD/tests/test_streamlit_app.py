@@ -440,6 +440,147 @@ class TestStreamlitAppIntegration:
         assert "In-Silico Computational Inferences" in markdown_texts_after
         assert "Transcript Consequences" in markdown_texts_after
 
+    @patch("evidence_engine.GeneticEvidenceOrchestrator.search_variant")
+    def test_task_8_3_gnomad_ancestry_frequency_visualization(self, mock_search):
+        """Verifies Task 8.3 interactive gnomAD ancestry frequency distribution chart and breakdown table."""
+        from evidence_engine import (
+            GeneticEvidenceBundle, GenomeAssembly, VariantIdentity, VariantPopulationFrequency,
+            VariantEvidenceRecord, SourceStatus
+        )
+        var_id = VariantIdentity("rs1042522", "17", 7676154, "G", "C", GenomeAssembly.GRCh38, "rs1042522")
+        vpf = VariantPopulationFrequency(
+            allele_count=1046941,
+            allele_number=1461558,
+            allele_frequency=0.716318,
+            popmax_frequency=0.825,
+            popmax_population="European (Finnish) (FIN)",
+            ancestry_frequencies={"afr": 0.65, "amr": 0.72, "eas": 0.58, "fin": 0.82, "nfe": 0.74, "sas": 0.69},
+        )
+        var_rec = VariantEvidenceRecord(
+            variant_identity=var_id,
+            population_evidence=vpf,
+            source_statuses={"gnomAD": SourceStatus.AVAILABLE},
+        )
+        mock_bundle = GeneticEvidenceBundle(
+            query_type="variant",
+            query_term="rs1042522",
+            target_assembly=GenomeAssembly.GRCh38,
+            timestamp="2026-11-04T00:00:00Z",
+            variant_identity=var_id,
+            population_frequency=vpf,
+            source_statuses=var_rec.source_statuses,
+            variant_evidence_record=var_rec,
+        )
+        mock_search.return_value = mock_bundle
+
+        self.at.run()
+        radios = [r for r in self.at.radio if "Evidence Target Type" in r.label]
+        if radios:
+            radios[0].set_value("Variant Identifier (rsID / UID)").run()
+        btn = [b for b in self.at.button if "Fetch Evidence" in b.label][0]
+        btn.click().run()
+        assert not self.at.exception
+
+        markdown_texts = " ".join([m.value for m in self.at.markdown])
+        assert "Interactive Continental Ancestry Frequency Distribution" in markdown_texts
+        info_texts = " ".join([i.value for i in self.at.info])
+        assert "Popmax Subpopulation Callout" in info_texts
+        assert any("Detailed Subpopulation Breakdown Table" in e.label for e in self.at.expander)
+
+    @patch("evidence_engine.GeneticEvidenceOrchestrator.search_variant")
+    def test_task_8_3_clinvar_submitter_disagreement_breakdown(self, mock_search):
+        """Verifies Task 8.3 ClinVar submitter disagreement metrics and individual assertion details."""
+        from evidence_engine import (
+            GeneticEvidenceBundle, GenomeAssembly, VariantIdentity, ClinicalClassification,
+            ClinVarSubmission, VariantEvidenceRecord, SourceStatus
+        )
+        var_id = VariantIdentity("rs28897724", "17", 43057110, "C", "T", GenomeAssembly.GRCh38, "rs28897724")
+        subs = [
+            ClinVarSubmission("Lab A", "Pathogenic", "criteria provided, single submitter", "2023-01-01", "Loss of function"),
+            ClinVarSubmission("Lab B", "Uncertain significance", "criteria provided, single submitter", "2023-05-15", "VUS criteria"),
+            ClinVarSubmission("Lab C", "Likely benign", "criteria provided, single submitter", "2022-11-10", "Mild phenotype"),
+        ]
+        ce = ClinicalClassification(
+            primary_classification="Conflicting interpretations of pathogenicity",
+            review_stars=1,
+            is_conflicting=True,
+            conflict_summary="Discordant assertions: pathogenic vs uncertain vs likely benign",
+            submissions=subs,
+        )
+        var_rec = VariantEvidenceRecord(
+            variant_identity=var_id,
+            clinical_evidence=ce,
+            source_statuses={"ClinVar": SourceStatus.LOCAL_REFERENCE},
+        )
+        mock_bundle = GeneticEvidenceBundle(
+            query_type="variant",
+            query_term="rs28897724",
+            target_assembly=GenomeAssembly.GRCh38,
+            timestamp="2026-11-04T00:00:00Z",
+            variant_identity=var_id,
+            clinical_evidence=ce,
+            source_statuses=var_rec.source_statuses,
+            variant_evidence_record=var_rec,
+        )
+        mock_search.return_value = mock_bundle
+
+        self.at.run()
+        radios = [r for r in self.at.radio if "Evidence Target Type" in r.label]
+        if radios:
+            radios[0].set_value("Variant Identifier (rsID / UID)").run()
+        btn = [b for b in self.at.button if "Fetch Evidence" in b.label][0]
+        btn.click().run()
+        assert not self.at.exception
+
+        metric_labels = [m.label for m in self.at.metric]
+        assert any("Pathogenic / Likely Pathogenic" in lbl for lbl in metric_labels)
+        assert any("Uncertain Significance (VUS)" in lbl for lbl in metric_labels)
+        assert any("Submitter Disagreement Detected" in w.value for w in self.at.warning)
+        assert any("Individual Submissions & Assertion Criteria" in e.label for e in self.at.expander)
+
+    @patch("evidence_engine.GeneticEvidenceOrchestrator.search_variant")
+    def test_task_8_3_in_silico_prediction_cards_and_disclaimers(self, mock_search):
+        """Verifies Task 8.3 distinct in-silico cards (SIFT, PolyPhen, QNN) and hypothesis warning."""
+        from evidence_engine import (
+            GeneticEvidenceBundle, GenomeAssembly, VariantIdentity, ComputationalEvidence,
+            VariantEvidenceRecord, SourceStatus
+        )
+        var_id = VariantIdentity("rs121913527", "17", 7674220, "C", "T", GenomeAssembly.GRCh38, "rs121913527")
+        comp = [
+            ComputationalEvidence("SIFT", "deleterious", 0.01, source="Ensembl VEP"),
+            ComputationalEvidence("PolyPhen-2", "probably_damaging", 0.985, source="Ensembl VEP"),
+            ComputationalEvidence("HelixGuard-QNN", "Synthetic Class 1 (Pathogenic-like)", 0.942, source="Helix Guard QNN"),
+        ]
+        var_rec = VariantEvidenceRecord(
+            variant_identity=var_id,
+            computational_evidence=comp,
+            source_statuses={"Ensembl": SourceStatus.AVAILABLE},
+        )
+        mock_bundle = GeneticEvidenceBundle(
+            query_type="variant",
+            query_term="rs121913527",
+            target_assembly=GenomeAssembly.GRCh38,
+            timestamp="2026-11-04T00:00:00Z",
+            variant_identity=var_id,
+            source_statuses=var_rec.source_statuses,
+            variant_evidence_record=var_rec,
+        )
+        mock_search.return_value = mock_bundle
+
+        self.at.run()
+        radios = [r for r in self.at.radio if "Evidence Target Type" in r.label]
+        if radios:
+            radios[0].set_value("Variant Identifier (rsID / UID)").run()
+        btn = [b for b in self.at.button if "Fetch Evidence" in b.label][0]
+        btn.click().run()
+        assert not self.at.exception
+
+        metric_labels = [m.label for m in self.at.metric]
+        assert any("SIFT (Conservation)" in lbl for lbl in metric_labels)
+        assert any("PolyPhen-2 (Structural)" in lbl for lbl in metric_labels)
+        assert any("HelixGuard Hybrid QNN" in lbl for lbl in metric_labels)
+        assert any("In-Silico Hypothesis-Generation Notice" in w.value for w in self.at.warning)
+
 
 class TestBackendSecurityAndCredentials:
     def test_secret_masking(self):
