@@ -1365,7 +1365,7 @@ def test_ensembl_adapter_variant_consequences_parsing(mock_get, mock_post):
 
     adapter = EnsemblAdapter()
     var_id = VariantNormalizer.normalize("rs121913527", assembly=GenomeAssembly.GRCh38)
-    status, transcripts, prov = adapter.fetch_variant_consequences(var_id)
+    status, transcripts, prov = adapter.fetch_variant_consequences(var_id, use_cache=False)
 
     assert status in (SourceStatus.AVAILABLE, SourceStatus.CACHED, SourceStatus.LOCAL_REFERENCE)
     assert len(transcripts) >= 1

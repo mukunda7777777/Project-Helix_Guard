@@ -1485,8 +1485,8 @@ class ClinVarAdapter(BaseSourceAdapter):
         uid = str(record.get("uid", record.get("accession", "")))
         title = record.get("title", "")
         
-        # Clinical significance & review status
-        clinsig_obj = record.get("clinical_significance", {})
+        # Clinical significance & review status (supports modern germline_classification and legacy clinical_significance)
+        clinsig_obj = record.get("germline_classification") or record.get("clinical_significance") or {}
         if isinstance(clinsig_obj, dict):
             desc = clinsig_obj.get("description", "Unknown")
             rev_stat = clinsig_obj.get("review_status", "no assertion criteria provided")

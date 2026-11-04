@@ -1,0 +1,92 @@
+{
+  "rs28897743": {
+    "normalized_identifier": "17-43044295-C-dup",
+    "associated_gene": "BRCA1",
+    "source_statuses": {
+      "ClinVar": "LOCAL_REFERENCE",
+      "Ensembl": "CACHED",
+      "gnomAD": "LOCAL_REFERENCE",
+      "PubMed": "CACHED",
+      "ClinGen": "LOCAL_REFERENCE"
+    },
+    "clinvar_classification": "Pathogenic",
+    "is_conflicting": false,
+    "allele_frequency": 0.000151,
+    "is_local_reference": true,
+    "transcripts_count": 42,
+    "citations_count": 1,
+    "latency_ms": 14736.1
+  },
+  "rs121913527": {
+    "normalized_identifier": "17-7674220-C-T",
+    "associated_gene": "TP53",
+    "source_statuses": {
+      "ClinVar": "CACHED",
+      "Ensembl": "CACHED",
+      "gnomAD": "CACHED",
+      "PubMed": "CACHED",
+      "ClinGen": "LOCAL_REFERENCE"
+    },
+    "clinvar_classification": "Pathogenic/Likely pathogenic",
+    "is_conflicting": false,
+    "allele_frequency": 6.157568061652308e-06,
+    "is_local_reference": false,
+    "transcripts_count": 39,
+    "citations_count": 1,
+    "latency_ms": 4964.9
+  },
+  "rs1042522": {
+    "normalized_identifier": "17-7676154-G-C",
+    "associated_gene": "TP53",
+    "source_statuses": {
+      "ClinVar": "CACHED",
+      "Ensembl": "LOCAL_REFERENCE",
+      "gnomAD": "CACHED",
+      "PubMed": "CACHED",
+      "ClinGen": "LOCAL_REFERENCE"
+    },
+    "clinvar_classification": "Likely benign",
+    "is_conflicting": false,
+    "allele_frequency": 0.7163184765845761,
+    "is_local_reference": false,
+    "transcripts_count": 1,
+    "citations_count": 5,
+    "latency_ms": 27913.5
+  },
+  "rs28897724": {
+    "normalized_identifier": "17-43057110-C-T",
+    "associated_gene": "BRCA1",
+    "source_statuses": {
+      "ClinVar": "LOCAL_REFERENCE",
+      "Ensembl": "LOCAL_REFERENCE",
+      "gnomAD": "LOCAL_REFERENCE",
+      "PubMed": "LOCAL_REFERENCE",
+      "ClinGen": "LOCAL_REFERENCE"
+    },
+    "clinvar_classification": "Conflicting interpretations of pathogenicity",
+    "is_conflicting": true,
+    "allele_frequency": 3.18e-05,
+    "is_local_reference": true,
+    "transcripts_count": 1,
+    "citations_count": 1,
+    "latency_ms": 24099.4
+  },
+  "rs80357906": {
+    "normalized_identifier": "17-43124031-AG--",
+    "associated_gene": "BRCA1",
+    "source_statuses": {
+      "ClinVar": "LOCAL_REFERENCE",
+      "Ensembl": "CACHED",
+      "gnomAD": "LOCAL_REFERENCE",
+      "PubMed": "CACHED",
+      "ClinGen": "LOCAL_REFERENCE"
+    },
+    "clinvar_classification": "Pathogenic",
+    "is_conflicting": false,
+    "allele_frequency": 9.55e-05,
+    "is_local_reference": true,
+    "transcripts_count": 70,
+    "citations_count": 5,
+    "latency_ms": 11147.7
+  }
+}
