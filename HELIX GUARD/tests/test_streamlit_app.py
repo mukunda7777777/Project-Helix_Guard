@@ -581,6 +581,27 @@ class TestStreamlitAppIntegration:
         assert any("HelixGuard Hybrid QNN" in lbl for lbl in metric_labels)
         assert any("In-Silico Hypothesis-Generation Notice" in w.value for w in self.at.warning)
 
+    def test_task_9_11_pipeline_execution_apptest(self):
+        """Executes Tab 4 sequential correction pipeline inside Streamlit AppTest harness."""
+        at = AppTest.from_file(app_file, default_timeout=45)
+        at.run()
+        assert not at.exception
+
+        # Locate pipeline execution button
+        btn_pipeline = [b for b in at.button if "Run Sequential Correction" in b.label]
+        assert len(btn_pipeline) == 1
+
+        btn_pipeline[0].click().run()
+        assert not at.exception
+
+        # Verify output markdown and headers
+        md_text = " ".join([m.value for m in at.markdown])
+        assert "Molecular Edit Audit Trail" in md_text
+        assert "Compound Heterozygosity Findings" in md_text
+        assert "Epistatic & Modifier Relationships" in md_text
+        subheader_text = " ".join([s.value for s in at.subheader])
+        assert "Investigative Single-Locus" in subheader_text
+
 
 class TestBackendSecurityAndCredentials:
     def test_secret_masking(self):
@@ -749,3 +770,15 @@ class TestBackendSecurityAndCredentials:
         assert "🟣 Local Reference Snapshot" in app_code
         assert "🔵 Validated Cache" in app_code
         assert "🟢 Live Request" in app_code
+
+    def test_task_9_11_tab_elements_exist(self):
+        """Verifies Streamlit app defines Tab 4 for sequential 5-gene correction & epistasis."""
+        app_file = os.path.join(helix_guard_dir, "app.py")
+        with open(app_file, "r", encoding="utf-8") as f:
+            app_code = f.read()
+
+        assert "Five-Gene Correction Pipeline & Epistasis" in app_code
+        assert "tab_correction_pipeline" in app_code
+        assert "Run Sequential Correction & Epistasis Pipeline" in app_code
+        assert "VCF (Variant Call Format) Stream" in app_code
+

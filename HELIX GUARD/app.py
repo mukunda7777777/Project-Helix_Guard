@@ -76,6 +76,29 @@ from evidence_engine import (
     VariantNormalizer,
 )
 
+# Import Task 9-11 Epistasis, In-Silico Correction & VCF/FASTA Pipelines
+from epistasis_engine import (
+    EpistasisEngine,
+    GenotypePhase,
+    InheritanceMode,
+    VariantLocus,
+    CompoundHeterozygoteResult,
+    EpistaticInteraction,
+    MultiVariantConflictReport,
+)
+from correction_engine import (
+    InSilicoCorrectionEngine,
+    CorrectionStrategy,
+    EditingModality,
+    ProposedEdit,
+    EditAuditRecord,
+    BeneficialVariantSuggestion,
+    CorrectionPipelineResult,
+    PRIORITY_PANEL,
+)
+from vcf_pipeline import VCFPipeline
+from fasta_generator import FASTAGenerator
+
 # -----------------------------------------------------------------------------
 # Page Configuration
 # -----------------------------------------------------------------------------
@@ -167,14 +190,16 @@ with st.sidebar:
     st.caption(
         "- **Tab 1**: Classical Residual 1D-CNN (Target DNA sequence)\n"
         "- **Tab 2**: Quantum Intelligence (Synthetic benchmark)\n"
-        "- **Tab 3**: Real ClinVar Intelligence (`clinvar_conflicting.csv`)"
+        "- **Tab 3**: Real ClinVar Intelligence (`clinvar_conflicting.csv`)\n"
+        "- **Tab 4**: Five-Gene Sequential Correction & Epistasis Pipeline"
     )
 
 # High-level Platform Navigation Tabs
-tab_classical, tab_quantum_demo, tab_clinvar = st.tabs([
+tab_classical, tab_quantum_demo, tab_clinvar, tab_correction_pipeline = st.tabs([
     "🧬 Classical Gene Optimization (Residual CNN)",
     "⚛️ Quantum Intelligence (Synthetic Demonstration)",
     "🔬 Genetic Variant Intelligence (Real ClinVar Pipeline)",
+    "🛡️ Five-Gene Correction Pipeline & Epistasis (Milestones 9–11)",
 ])
 
 
@@ -1425,3 +1450,231 @@ with tab_clinvar:
             st.markdown("**Active Limitations for this Record:**")
             for lim in active_bundle.scientific_limitations:
                 st.write(f"- {lim}")
+
+
+# =============================================================================
+# TAB 4: FIVE-GENE CORRECTION PIPELINE & EPISTASIS CONFLICT RESOLUTION
+# =============================================================================
+with tab_correction_pipeline:
+    st.header("🛡️ Five-Gene Sequential In-Silico Correction & Epistasis Pipeline")
+    st.info(
+        "🔬 **Milestones 9–11 Computational Architecture**: Integrates multi-variant VCF parsing, "
+        "compound heterozygosity detection, cis/trans phasing analysis, epistatic cross-effect modeling, "
+        "and sequential priority-based in-silico repair with FASTA sequence export."
+    )
+
+    st.warning(
+        "⚠️ **Ethical & Clinical Boundary Notice**: HELIX GUARD is strictly a computational simulation and "
+        "predictive model. No wet-lab procedures, embryonic editing, clinical interventions, or polygenic "
+        "enhancements are performed or recommended."
+    )
+
+    # 1. Genotype Ingestion & Preset Selector
+    st.subheader("1. 📥 Multi-Variant Genotype & VCF Ingestion")
+    vcf_pipeline = VCFPipeline()
+    epistasis_engine = EpistasisEngine()
+    correction_engine = InSilicoCorrectionEngine(epistasis_engine=epistasis_engine)
+    fasta_generator = FASTAGenerator()
+
+    col_preset, col_opts = st.columns([2, 1])
+    with col_preset:
+        preset_choice = st.selectbox(
+            "Select Clinical Genotype Profile:",
+            [
+                "Complete 5-Gene Priority Panel (BRCA1, HBB, CFTR, HEXA, DMD)",
+                "CFTR Compound Heterozygous in Trans (Biallelic Disruption)",
+                "TP53 + BRCA1 Synthetic Lethality Multi-Locus Interaction",
+                "Custom VCF Text Input",
+            ],
+            index=0,
+            key="vcf_preset_choice"
+        )
+
+    with col_opts:
+        include_beneficial = st.checkbox(
+            "Include Investigative Beneficial Suggestion (CCR5-Δ32)",
+            value=True,
+            help="Displays well-characterized beneficial alleles with documented trade-offs.",
+            key="vcf_include_beneficial"
+        )
+
+    # Determine default VCF text
+    if "5-Gene" in preset_choice:
+        default_vcf = vcf_pipeline.get_sample_preset_vcf("complete_5gene_panel")
+    elif "CFTR" in preset_choice:
+        default_vcf = vcf_pipeline.get_sample_preset_vcf("cftr_compound_het")
+    elif "TP53" in preset_choice:
+        default_vcf = vcf_pipeline.get_sample_preset_vcf("synthetic_lethality_tp53_brca1")
+    else:
+        default_vcf = "##fileformat=VCFv4.2\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE\n"
+
+    vcf_input = st.text_area(
+        "VCF (Variant Call Format) Stream:",
+        value=default_vcf,
+        height=150,
+        key="vcf_stream_input"
+    )
+
+    sample_id = st.text_input("Patient / Sample Identifier:", value="HG_CLINICAL_SIM_001", key="vcf_sample_id")
+
+    if st.button("🚀 Run Sequential Correction & Epistasis Pipeline", type="primary", key="btn_run_pipeline"):
+        parsed_variants = vcf_pipeline.parse_vcf_text(vcf_input)
+
+        if not parsed_variants:
+            st.error("No valid variant records detected in the provided VCF input.")
+        else:
+            st.success(f"Successfully ingested and parsed {len(parsed_variants)} variant locus records.")
+
+            # Display parsed variants
+            st.markdown("##### 🧬 Ingested Variant Inventory")
+            var_summary = []
+            for v in parsed_variants:
+                var_summary.append({
+                    "Variant ID": v.variant_id,
+                    "Gene": v.gene_symbol,
+                    "Locus": f"{v.chromosome}:{v.position}",
+                    "Ref / Alt": f"{v.ref_allele} > {v.alt_allele}",
+                    "Pathogenicity": v.pathogenicity,
+                    "Zygosity": v.zygosity,
+                })
+            st.dataframe(pd.DataFrame(var_summary), use_container_width=True)
+
+            # 2. Epistasis & Phasing Analysis (Milestone 9)
+            st.divider()
+            st.subheader("2. 🧩 Epistasis, Phasing & Compound Heterozygosity Analysis")
+            phase_map = {}
+            if "CFTR" in preset_choice:
+                phase_map = {("rs121908752", "rs75527207"): GenotypePhase.TRANS}
+
+            epistasis_report = epistasis_engine.analyze_multi_variant_profile(
+                variants=parsed_variants,
+                phase_map=phase_map,
+                base_risks={p["gene"]: 0.10 for p in correction_engine.priority_panel}
+            )
+
+            c_epi1, c_epi2 = st.columns(2)
+            with c_epi1:
+                st.markdown("**Compound Heterozygosity Findings:**")
+                if not epistasis_report.compound_heterozygotes:
+                    st.info("No compound heterozygosity detected among input variants.")
+                else:
+                    for comp in epistasis_report.compound_heterozygotes:
+                        if comp.is_compound_heterozygous:
+                            st.error(f"🚨 **{comp.gene_symbol}**: Compound Heterozygous ({comp.phase.value})")
+                        else:
+                            st.warning(f"⚠️ **{comp.gene_symbol}**: Phase {comp.phase.value}")
+                        st.caption(comp.explanation)
+
+            with c_epi2:
+                st.markdown("**Epistatic & Modifier Relationships:**")
+                if not epistasis_report.epistatic_interactions:
+                    st.info("No inter-genic epistatic interactions detected.")
+                else:
+                    for epi in epistasis_report.epistatic_interactions:
+                        st.warning(f"⚡ **{epi.interaction_type}**: {epi.gene_a} ({epi.variant_a}) ⟷ {epi.gene_b} ({epi.variant_b})")
+                        st.caption(f"**Severity Delta**: {epi.severity_delta:+.2f} | {epi.biological_rationale}")
+
+            if epistasis_report.conflicts_identified:
+                with st.expander("📋 Detailed Interaction Conflict Log", expanded=True):
+                    for conf in epistasis_report.conflicts_identified:
+                        st.write(f"- {conf}")
+
+            # 3. Sequential 5-Gene In-Silico Correction Execution (Milestone 10)
+            st.divider()
+            st.subheader("3. 🔧 Sequential Priority-Based In-Silico Repair Execution")
+            pipeline_result = correction_engine.run_pipeline(
+                variants=parsed_variants,
+                initial_sequence="ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATC" * 10,
+                include_beneficial_suggestion=include_beneficial
+            )
+
+            # Before / After Risk Profiles
+            st.markdown("##### 📊 Pre-Edit vs Post-Edit Disease Risk Profile (5-Gene Panel)")
+            risk_comparison = []
+            for item in correction_engine.priority_panel:
+                g = item["gene"]
+                risk_comparison.append({
+                    "Priority": item["priority"],
+                    "Gene": g,
+                    "Condition": item["condition"],
+                    "Pre-Edit Risk": pipeline_result.initial_risk_profile.get(g, 0.10),
+                    "Post-Edit Risk": pipeline_result.final_risk_profile.get(g, 0.10),
+                })
+            risk_df = pd.DataFrame(risk_comparison).set_index("Gene")
+            st.bar_chart(risk_df[["Pre-Edit Risk", "Post-Edit Risk"]])
+
+            # Step-by-step edit audit table
+            st.markdown("##### 📝 Molecular Edit Audit Trail")
+            if not pipeline_result.edit_history:
+                st.info("No sequence modifications required; all variants clear or benign.")
+            else:
+                audit_rows = []
+                for edit in pipeline_result.edit_history:
+                    pe = edit.proposed_edit
+                    audit_rows.append({
+                        "Step": edit.step_number,
+                        "Gene": edit.gene_symbol,
+                        "Variant": edit.variant_id,
+                        "Strategy": pe.strategy.value,
+                        "Modality": pe.recommended_modality.value,
+                        "Guide RNA Candidate": pe.guide_rna_candidate,
+                        "Predicted Efficiency": f"{pe.predicted_efficiency * 100:.1f}%",
+                        "Pre Risk": f"{edit.original_risk:.2f}",
+                        "Post Risk": f"{edit.post_edit_risk:.2f}",
+                        "Status": edit.status,
+                    })
+                st.dataframe(pd.DataFrame(audit_rows), use_container_width=True)
+
+            # 4. Beneficial Variant Suggestions (Stretch Goal)
+            if pipeline_result.beneficial_suggestions:
+                st.divider()
+                st.subheader("4. 🌟 Investigative Single-Locus Beneficial Allele Exploration")
+                for ben in pipeline_result.beneficial_suggestions:
+                    with st.expander(f"🧬 {ben.gene_symbol} ({ben.allele_name}) — Investigative Profile", expanded=True):
+                        st.markdown(f"**Beneficial Phenotype**: {ben.beneficial_phenotype}")
+                        st.markdown("**Documented Biological Trade-Offs**:")
+                        for t in ben.documented_trade_offs:
+                            st.write(f"- ⚠️ {t}")
+                        st.caption(f"🛡️ *Ethical Safeguard*: {ben.ethical_safeguard_notice}")
+
+            # 5. FASTA Sequence Export & Clinical Report Download (Milestone 11)
+            st.divider()
+            st.subheader("5. 💾 Validated FASTA Sequence & Clinical Report Export")
+
+            fasta_content = fasta_generator.generate_fasta(
+                sequence="ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATC" * 10,
+                sample_id=sample_id,
+                edit_history=pipeline_result.edit_history
+            )
+
+            clinical_report_md = fasta_generator.generate_clinical_markdown_report(
+                sample_id=sample_id,
+                edit_history=pipeline_result.edit_history,
+                initial_risks=pipeline_result.initial_risk_profile,
+                final_risks=pipeline_result.final_risk_profile,
+                beneficial_suggestions=pipeline_result.beneficial_suggestions
+            )
+
+            c_exp1, c_exp2 = st.columns(2)
+            with c_exp1:
+                st.markdown("**FASTA Sequence Preview:**")
+                st.code(fasta_content[:350] + "\n... [sequence truncated for preview] ...", language="text")
+                st.download_button(
+                    label="📥 Download Validated FASTA File",
+                    data=fasta_content,
+                    file_name=f"{sample_id}_helix_guard_corrected.fasta",
+                    mime="text/plain",
+                    key="dl_fasta_btn"
+                )
+
+            with c_exp2:
+                st.markdown("**Clinical Audit Report Preview:**")
+                st.text_area("Markdown Report:", value=clinical_report_md[:400] + "\n...", height=150, disabled=True)
+                st.download_button(
+                    label="📄 Download Clinical Markdown Report",
+                    data=clinical_report_md,
+                    file_name=f"{sample_id}_clinical_report.md",
+                    mime="text/markdown",
+                    key="dl_report_btn"
+                )
+
