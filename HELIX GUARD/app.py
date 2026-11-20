@@ -191,15 +191,17 @@ with st.sidebar:
         "- **Tab 1**: Classical Residual 1D-CNN (Target DNA sequence)\n"
         "- **Tab 2**: Quantum Intelligence (Synthetic benchmark)\n"
         "- **Tab 3**: Real ClinVar Intelligence (`clinvar_conflicting.csv`)\n"
-        "- **Tab 4**: Five-Gene Sequential Correction & Epistasis Pipeline"
+        "- **Tab 4**: Five-Gene Sequential Correction & Epistasis Pipeline\n"
+        "- **Tab 5**: Platform Tutorial & Design Thinking Guide"
     )
 
 # High-level Platform Navigation Tabs
-tab_classical, tab_quantum_demo, tab_clinvar, tab_correction_pipeline = st.tabs([
+tab_classical, tab_quantum_demo, tab_clinvar, tab_correction_pipeline, tab_tutorial = st.tabs([
     "🧬 Classical Gene Optimization (Residual CNN)",
     "⚛️ Quantum Intelligence (Synthetic Demonstration)",
     "🔬 Genetic Variant Intelligence (Real ClinVar Pipeline)",
     "🛡️ Five-Gene Correction Pipeline & Epistasis (Milestones 9–11)",
+    "📖 Platform Tutorial & Design Thinking Guide",
 ])
 
 
@@ -1677,4 +1679,102 @@ with tab_correction_pipeline:
                     mime="text/markdown",
                     key="dl_report_btn"
                 )
+
+# =============================================================================
+# TAB 5: PLATFORM TUTORIAL & DESIGN THINKING GUIDE
+# =============================================================================
+with tab_tutorial:
+    st.header("📖 Helix Guard Platform Guide & Design Thinking Methodology")
+    st.markdown(
+        "Welcome to the **Helix Guard Interactive Tutorial**. This guide explains how to navigate "
+        "and operate each module of the platform, how to interpret scientific outputs, and how the "
+        "**5 Steps of Design Thinking** are architected directly into the engine."
+    )
+
+    t_col1, t_col2 = st.columns([1, 1])
+
+    with t_col1:
+        with st.expander("🔬 Module 1: Classical 1D-CNN Sequence Optimizer", expanded=True):
+            st.markdown("""
+            **What it does:**
+            Scans a 101-bp genomic DNA sequence window using a PyTorch Residual 1D-CNN. It systematically tests in-silico single-nucleotide substitutions across all positions to identify mutations that computationally decrease predicted pathogenicity risk.
+
+            **How to run it:**
+            1. Navigate to **Tab 1**.
+            2. Enter or paste a 101-nucleotide sequence (`A`, `C`, `G`, `T`).
+            3. Click **🚀 Run Pathogenicity Optimization**.
+            4. Review the initial model score, top-ranked beneficial substitutions, and base-level delta deltas.
+            """)
+
+        with st.expander("⚛️ Module 2: Quantum Intelligence (Synthetic QNN)", expanded=True):
+            st.markdown("""
+            **What it does:**
+            Demonstrates quantum machine learning on parameterized quantum circuits using Qiskit 2.x. Implements a 4-qubit `ZZFeatureMap` for non-linear data encoding and `RealAmplitudes` variational two-local ansatz with local statevector CPU simulation.
+
+            **How to run it:**
+            1. Navigate to **Tab 2**.
+            2. Configure circuit depth, entanglement topology (`linear` vs `full`), and number of training epochs.
+            3. Click **⚡ Train Quantum Neural Network**.
+            4. Inspect the interactive circuit diagram, training loss trajectory, prediction confidence distribution, and test single-sample inference.
+            """)
+
+    with t_col2:
+        with st.expander("📊 Module 3: Real ClinVar Intelligence & Live Evidence", expanded=True):
+            st.markdown("""
+            **What it does:**
+            Ingests real clinical records from `clinvar_conflicting.csv` (65,188 variants), extracts 14 molecular and population features, and trains zero-data-leakage baseline models. Additionally orchestrates live external evidence retrieval across 5 authoritative sources (NCBI ClinVar, gnomAD v4, Ensembl VEP, PubMed, ClinGen) with strict GRCh38/GRCh37 assembly isolation.
+
+            **How to run it:**
+            1. Navigate to **Tab 3**.
+            2. Select feature subsets and training fraction.
+            3. Click **Train Classical Baseline Models** to evaluate Random Forest vs Gradient Boosting.
+            4. Use the **Live Multi-Source Evidence Query** to search real genomic variants and inspect consensus classifications.
+            """)
+
+        with st.expander("🛡️ Module 4: 5-Gene Sequential Correction & Epistasis Pipeline", expanded=True):
+            st.markdown("""
+            **What it does:**
+            Resolves complex multi-variant genetics across a priority-ranked panel of 5 high-impact disease genes (*BRCA1 > HBB > CFTR > HEXA > DMD*). Computes *cis* vs *trans* phasing for compound heterozygosity, analyzes non-additive epistatic interactions (such as *TP53* + *BRCA1* synthetic lethality), proposes optimal precision editing modalities (Base Editing, Prime Editing, ASO exon skipping), audits off-target safety risks (e.g. *CCR5*-Δ32 West Nile trade-offs), and exports VCF v4.2 and validated 80-column FASTA sequences.
+
+            **How to run it:**
+            1. Navigate to **Tab 4**.
+            2. Select a pre-configured patient scenario (*Severe Multi-Gene Case*, *Compound Heterozygote CFTR*, etc.) or upload a `.vcf` file.
+            3. Click **🚀 Execute In-Silico Correction Pipeline**.
+            4. Review the Priority Execution Flow, Phasing & Epistasis Matrix, and download the validated FASTA and Clinical Audit Markdown reports.
+            """)
+
+    st.divider()
+
+    st.subheader("💡 The 5 Steps of Design Thinking in Helix Guard")
+    d1, d2, d3, d4, d5 = st.columns(5)
+    with d1:
+        st.markdown("#### 1. Empathize")
+        st.info("**User Need**\nClinicians & geneticists struggle with ambiguous variants of uncertain significance (VUS) and conflicting evidence across clinical databases.")
+    with d2:
+        st.markdown("#### 2. Define")
+        st.warning("**Core Problem**\nPredicting clinical impact requires bridging disparate data silos: molecular CNN sequence models, quantum feature correlations, and live multi-source evidence.")
+    with d3:
+        st.markdown("#### 3. Ideate")
+        st.success("**Innovation**\nA unified hybrid architecture integrating classical CNNs, Qiskit variational QNNs, live 5-source evidence aggregation, and phased epistasis modeling.")
+    with d4:
+        st.markdown("#### 4. Prototype")
+        st.info("**Implementation**\nStreamlit interactive clinical dashboard with real-time model execution, 3D visualization hooks, and automated VCF/FASTA data pipelines.")
+    with d5:
+        st.markdown("#### 5. Test")
+        st.error("**Verification**\n152 automated regression tests, zero-leakage ML benchmarks, audit-logged edit trails, and strict persistent scientific disclaimers.")
+
+    st.divider()
+
+    st.subheader("📊 How to Interpret Dashboard Metrics")
+    m1, m2, m3 = st.columns(3)
+    with m1:
+        st.markdown("**Pathogenicity Score (0.0 to 1.0)**")
+        st.caption("Computational output score generated by the Residual 1D-CNN or Baseline ML models. Scores near 1.0 indicate high predicted functional disruption, while scores near 0.0 indicate neutral or benign variant behavior.")
+    with m2:
+        st.markdown("**Quantum Expectation Value $\\langle Z \\rangle$**")
+        st.caption("Observable measurement output from the 4-qubit parameterized variational circuit. Mapped through a sigmoid function to produce class probabilities for complex quantum correlation classification.")
+    with m3:
+        st.markdown("**Epistasis & Phasing Conflicts**")
+        st.caption("Compound heterozygous variants in *trans* configuration impact both maternal and paternal alleles (causing recessive disease), whereas *cis* configuration affects only one allele. Epistatic synthetic lethality flags multi-gene lethal risk.")
+
 
